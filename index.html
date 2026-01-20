@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <title>Intramurals teams</title>
+
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+   <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+
+     <style>
+    h1 { text-align:center }
+    html, body { height: 100%; }
+    body {
+      font-family: Arial, 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      background-color: #e6f6ff; /* light blue outside the card */
+      padding: 28px;
+      margin: 0;
+      box-sizing: border-box;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .card {
+      max-width: 720px;
+      margin: 18px auto;
+      border-radius: 10px;
+      background-color: #fff; /* white card */
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+      padding: 28px;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    /* Radio styles */
+    .radios { display:flex; gap:18px; align-items:center; }
+    .radio { display:inline-flex; align-items:center; gap:8px; cursor:pointer; user-select:none; position:relative; }
+    .radio input[type="radio"] { position:absolute; opacity:0; width:0; height:0; }
+    .custom { width:18px; height:18px; border-radius:50%; border:2px solid #0b66ff; display:inline-block; position:relative; flex:0 0 18px; }
+    .custom::after { content:""; position:absolute; top:50%; left:50%; width:8px; height:8px; border-radius:50%; background:#0b66ff; transform:translate(-50%,-50%) scale(0); transition:transform 120ms ease; }
+    .radio input[type="radio"]:checked + .custom::after { transform:translate(-50%,-50%) scale(1); }
+    .radio input[type="radio"]:focus + .custom { box-shadow:0 0 0 6px rgba(11,102,255,0.12); }
+
+    /* Signup block */
+    .signup-card { margin-top:18px; text-align:center; }
+    .q-label { display:block; text-align:left; margin:6px 0 8px 4px; color:#333; font-size:14px; }
+    .select { width:100%; padding:10px 12px; border:1px solid #e0e6ef; border-radius:6px; margin-bottom:10px; font-size:14px; background:#fff; }
+    .gradient-btn { width:100%; padding:10px 14px; border-radius:6px; border:0; color:#fff; font-weight:700; background: linear-gradient(90deg, #ff5f6d 0%, #ffc371 25%, #7ad7ff 50%, #b28cff 75%, #e8ff8a 100%); box-shadow:0 6px 18px rgba(0,0,0,0.08); cursor:pointer; }
+    .gradient-btn:active { transform:translateY(1px); }
+    .result { text-align:center; margin-top:14px; }
+    .result.hidden { display:none; }
+    #result-text { color:#333; margin:8px 0; font-weight:700; }
+    #team-image { max-width:360px; width:80%; height:auto; display:block; margin:8px auto 0; border-radius:6px; box-shadow:0 6px 18px rgba(0,0,0,0.12); background:#fff; }
+     </style>
+    
+</head>
+<body>  
+  <div class="card">
+    <h1> Intramurals Teams </h1>
+
+    <div class="question">
+  <p>Are you done with the online registration?</p>
+  <div class="radios">
+    <label class="radio">
+      <input type="radio" name="registration_done" value="yes" checked>
+      <span class="custom"></span>
+      <span class="label-text">Yes</span>
+    </label>
+    <label class="radio">
+      <input type="radio" name="registration_done" value="no">
+      <span class="custom"></span>
+      <span class="label-text">No</span>
+    </label>
+  </div>
+</div>
+<br>
+ <div class="question">
+  <p>Do you have the medical clearance from the clinic?</p>
+  <div class="radios">
+    <label class="radio">
+      <input type="radio" name="clearance" value="yes" checked>
+      <span class="custom"></span>
+      <span class="label-text">Yes</span>
+    </label>
+    <label class="radio">
+      <input type="radio" name="clearance" value="no">
+      <span class="custom"></span>
+      <span class="label-text">No</span>
+    </label>
+  </div>
+</div>
+
+
+<div class="signup-card">
+  <label class="q-label" for="grade-select">What's your Grade & Section?</label>
+  <select id="grade-select" class="select">
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+  </select>
+
+  <select id="section-select" class="select">
+    <option>Ruby</option>
+    <option>Sapphire</option>
+    <option>Emerald</option>
+    <option>Topaz</option>
+  </select>
+
+  <button id="signup-btn" class="gradient-btn">Sign up</button>
+
+  <div id="result" class="result hidden">
+    <p id="result-text">Congratulations! You are part of the Yellow Tigers 🐯</p>
+    <img id="team-image" src="images/yellow-tigers.png" alt="Yellow Tigers" />
+  </div>
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('signup-btn');
+    const grade = document.getElementById('grade-select');
+    const section = document.getElementById('section-select');
+    const result = document.getElementById('result');
+    const resultText = document.getElementById('result-text');
+    const teamImage = document.getElementById('team-image');
+
+    function getTeamForSection(chosenSection) {
+      if (chosenSection === 'Ruby') {
+        return { name: 'Red Bulldogs', img: 'red.jpg', color: '#d32f2f' };
+      } else if (chosenSection === 'Sapphire') {
+        return { name: 'Yellow Tigers', img: 'yellow.jpg', color: '#ffcc00' };
+      } else if (chosenSection === 'Emerald') {
+        return { name: 'Green Hornets', img: 'green.jpg', color: '#2e8b57' };
+      } else if (chosenSection === 'Topaz') {
+        return { name: 'Blue Bears', img: 'blue.jpg', color: '#1e90ff' };
+      } else {
+        return { name: 'Yellow Tigers', img: 'yellow.jpg', color: '#ffcc00' };
+      }
+    }
+
+    function updateTeam() {
+      const chosenSection = section.value;
+      const chosenGrade = grade.value;
+      const team = getTeamForSection(chosenSection);
+
+      resultText.textContent = `Congratulations! You are part of the ${team.name}`;
+      teamImage.src = team.img;
+      teamImage.alt = team.name;
+      resultText.style.color = team.color;
+      result.classList.remove('hidden');
+      result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    btn.addEventListener('click', function(){
+      updateTeam();
+    });
+
+    // After initial signup, changing the selects updates the shown team
+    grade.addEventListener('change', function(){
+      if (!result.classList.contains('hidden')) updateTeam();
+    });
+    section.addEventListener('change', function(){
+      if (!result.classList.contains('hidden')) updateTeam();
+    });
+  })();
+</script>
+
+</body>
+</html>
